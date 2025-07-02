@@ -4,6 +4,7 @@ import Music.PitchClass
 import Music.Interval
 import Music.Chord
 import Music.JazzChord
+import Music.Triad
 
 c = [ (flat E, [D, flat B, G, F, A])
     , (flat E, [D, flat B, F, flat A])

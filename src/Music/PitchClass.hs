@@ -8,7 +8,7 @@ module Music.PitchClass
 import Music.Prettify
 
 data PitchClass = C|Cs|D|Ds|E|F|Fs|G|Gs|A|As|B
-    deriving (Eq,Enum,Bounded,Show)
+    deriving (Eq,Ord,Enum,Bounded,Show)
 
 flat :: PitchClass -> PitchClass
 flat = flip (-) 1

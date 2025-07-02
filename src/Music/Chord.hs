@@ -12,6 +12,7 @@ module Music.Chord
     , chord5
     , chord6
     , chord7
+    , intervalsFromRoot
     , intervals
     , semitones
     ) where
@@ -22,8 +23,11 @@ import Music.Prettify
 
 type Chord = (PitchClass, [PitchClass])
 
+intervalsFromRoot :: PitchClass -> PitchClass -> [Interval]
+intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if (root > pc) then 12 else 0)) - fromEnum root
+
 intervals :: Chord -> [Interval]
-intervals (root, set) = foldr (++) [] $ map (fromSemitones . fromEnum . flip (-) root) set
+intervals (root, set) = foldr (++) [] $ map (intervalsFromRoot root) set
 
 data Chord2 = C2Major|C2Minor|C2Augmented|C2Major7|C2Minor7|C2Augmented7|C2None
     deriving (Eq)
