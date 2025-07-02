@@ -14,6 +14,7 @@ c = [ (flat E, [D, flat B, G, F, A])
     , (G, [D])
     , (G, [D,F])
     , (G, [B,D])
+    , (G, [C,E])
     ]
 
 main :: IO ()

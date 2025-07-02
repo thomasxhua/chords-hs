@@ -1,6 +1,7 @@
 module Music.JazzChord
     ( JazzChord
     , jazzify
+    , chordify
     , prettify
     ) where
 
@@ -12,6 +13,11 @@ type JazzChord = (PitchClass, Chord2, Chord3, Chord4, Chord5, Chord6, Chord7)
 
 jazzify :: Chord -> JazzChord 
 jazzify c@(root, _) = (root, chord2 c, chord3 c, chord4 c, chord5 c, chord6 c, chord7 c)
+
+chordify :: JazzChord -> Chord
+chordify (root,c2,c3,c4,c5,c6,c7) = (root, filter ((/=) root) [f c2, f c3, f c4, f c5, f c6, f c7])
+    where
+        f c = root + (toPitchClass $ semitones c)
 
 instance Prettify JazzChord where
     prettify (root, _, C3Minor, _, C5Diminished, _, C7Diminished) = map f $ prettify root

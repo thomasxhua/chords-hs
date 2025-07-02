@@ -13,6 +13,7 @@ module Music.Chord
     , chord6
     , chord7
     , intervals
+    , semitones
     ) where
 
 import Music.PitchClass
@@ -26,6 +27,15 @@ intervals (root, set) = foldr (++) [] $ map (fromSemitones . fromEnum . flip (-)
 
 data Chord2 = C2Major|C2Minor|C2Augmented|C2Major7|C2Minor7|C2Augmented7|C2None
     deriving (Eq)
+
+instance Semitones Chord2 where
+    semitones C2Major      = semitones $ SInterval Second SMajor
+    semitones C2Minor      = semitones $ SInterval Second SMinor
+    semitones C2Augmented  = semitones $ SInterval Second SAugmented
+    semitones C2Major7     = semitones $ SInterval Second SMajor
+    semitones C2Minor7     = semitones $ SInterval Second SMinor
+    semitones C2Augmented7 = semitones $ SInterval Second SAugmented
+    semitones C2None       = 0
 
 instance Show Chord2 where
     show C2Minor      = "b2"
@@ -57,6 +67,13 @@ chord2 chord
 data Chord3 = C3Sus2|C3Minor|C3Major|C3Sus4|C3No3|C3None
     deriving (Eq)
 
+instance Semitones Chord3 where
+    semitones C3Minor = semitones $ SInterval Third  SMinor
+    semitones C3Major = semitones $ SInterval Third  SMajor 
+    semitones C3Sus4  = semitones $ PInterval Fourth PPerfect
+    semitones C3Sus2  = semitones $ SInterval Second SMajor 
+    semitones C3None  = 0
+
 instance Show Chord3 where
     show C3Minor = "-"
     show C3Major = ""
@@ -76,6 +93,13 @@ chord3 = f . intervals
 
 data Chord4 = C4Perfect|C4Augmented|C4Perfect7|C4Augmented7|C4None
     deriving (Eq)
+
+instance Semitones Chord4 where
+    semitones C4Perfect    = semitones $ PInterval Fourth PPerfect
+    semitones C4Augmented  = semitones $ PInterval Fourth PAugmented
+    semitones C4Perfect7   = semitones $ PInterval Fourth PPerfect
+    semitones C4Augmented7 = semitones $ PInterval Fourth PAugmented
+    semitones C4None       = 0
 
 instance Show Chord4 where
     show C4Perfect    = "4"
@@ -101,6 +125,12 @@ chord4 chord
 data Chord5 = C5Diminished|C5Perfect|C5Augmented|C5None
     deriving (Eq)
 
+instance Semitones Chord5 where
+    semitones C5Diminished = semitones $ PInterval Fifth PDiminished
+    semitones C5Perfect    = semitones $ PInterval Fifth PPerfect
+    semitones C5Augmented  = semitones $ PInterval Fifth PAugmented
+    semitones C5None       = 0
+
 instance Show Chord5 where
     show C5Diminished = "b5"
     show C5Perfect    = ""
@@ -118,6 +148,13 @@ chord5 = f . intervals
 
 data Chord6 = C6Minor|C6Major|C6Minor7|C6Major7|C6None
     deriving (Eq)
+
+instance Semitones Chord6 where
+    semitones C6Minor      = semitones $ SInterval Sixth SMinor
+    semitones C6Major      = semitones $ SInterval Sixth SMajor
+    semitones C6Minor7     = semitones $ SInterval Sixth SMinor
+    semitones C6Major7     = semitones $ SInterval Sixth SMajor
+    semitones C6None       = 0
 
 instance Show Chord6 where
     show C6Minor      = "b6"
@@ -140,6 +177,12 @@ chord6 chord
 
 data Chord7 = C7Diminished|C7Dominant|C7Major|C7None
     deriving (Eq)
+
+instance Semitones Chord7 where
+    semitones C7Dominant   = semitones $ SInterval Seventh SMinor
+    semitones C7Major      = semitones $ SInterval Seventh SMajor
+    semitones C7Diminished = semitones $ SInterval Seventh SDiminished
+    semitones C7None       = 0
 
 instance Show Chord7 where
     show C7Dominant   = "7"

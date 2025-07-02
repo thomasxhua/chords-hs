@@ -2,6 +2,7 @@ module Music.PitchClass
     ( PitchClass(..)
     , flat
     , sharp
+    , toPitchClass
     ) where
 
 import Music.Prettify
@@ -14,6 +15,9 @@ flat = flip (-) 1
 
 sharp :: PitchClass -> PitchClass
 sharp = (+) 1
+
+toPitchClass :: Int -> PitchClass
+toPitchClass n = toEnum (n `mod` 12)
 
 instance Num PitchClass where
     a + b         = toEnum $ (fromEnum a + fromEnum b) `mod` 12
