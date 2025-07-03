@@ -6,7 +6,10 @@ module Music.Interval
     , IntervalSteppedQuality(..)
     , Semitones(..)
     , fromSemitones
+    , intervalsFromRoot
     ) where
+
+import Music.PitchClass
 
 data IntervalPerfect        = Unison|Fourth|Fifth
     deriving (Eq,Show)
@@ -81,4 +84,7 @@ fromSemitones n = f n'
                       , SInterval Seventh SMinor ]
           | x == 11 = [ SInterval Seventh SMajor
                       , PInterval Unison  PDiminished ]
+
+intervalsFromRoot :: PitchClass -> PitchClass -> [Interval]
+intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if (root > pc) then 12 else 0)) - fromEnum root
 

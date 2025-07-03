@@ -1,5 +1,6 @@
 module Music.Chord
     ( Chord(..)
+    , Chordify(..)
     , Chord2(..)
     , Chord3(..)
     , Chord4(..)
@@ -12,7 +13,6 @@ module Music.Chord
     , chord5
     , chord6
     , chord7
-    , intervalsFromRoot
     , intervals
     , semitones
     ) where
@@ -23,8 +23,8 @@ import Music.Prettify
 
 type Chord = (PitchClass, [PitchClass])
 
-intervalsFromRoot :: PitchClass -> PitchClass -> [Interval]
-intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if (root > pc) then 12 else 0)) - fromEnum root
+class Chordify a where
+    chordify :: a -> Chord
 
 intervals :: Chord -> [Interval]
 intervals (root, set) = foldr (++) [] $ map (intervalsFromRoot root) set
@@ -52,19 +52,16 @@ instance Show Chord2 where
 
 chord2 :: Chord -> Chord2
 chord2 chord
-    | chord3 chord /= C3Sus2
-      && SInterval Second SMajor `elem` ints     = if hasSeventh ints
+    | SInterval Second SMajor `elem` ints     = if hasSeventh ints
                                                       then C2Major7
                                                       else C2Major
-    | chord3 chord /= C3Sus2
-      && SInterval Second SMinor `elem` ints     = if hasSeventh ints
+    | SInterval Second SMinor `elem` ints     = if hasSeventh ints
                                                       then C2Minor7
                                                       else C2Minor
-    | chord3 chord /= C3Sus2
-      && SInterval Second SAugmented `elem` ints = if hasSeventh ints
+    | SInterval Second SAugmented `elem` ints = if hasSeventh ints
                                                       then C2Augmented7
                                                       else C2Augmented
-    | otherwise                                  = C2None
+    | otherwise                               = C2None
     where
         ints = intervals $ chord
 
@@ -114,15 +111,13 @@ instance Show Chord4 where
 
 chord4 :: Chord -> Chord4
 chord4 chord
-    | hasThird ints
-      && PInterval Fourth PPerfect `elem` ints   = if hasSeventh ints
+    | PInterval Fourth PPerfect `elem` ints   = if hasSeventh ints
                                                       then C4Perfect7
                                                       else C4Perfect
-    | hasThird ints
-      && PInterval Fourth PAugmented `elem` ints = if hasSeventh ints
+    | PInterval Fourth PAugmented `elem` ints = if hasSeventh ints
                                                       then C4Augmented7
                                                       else C4Augmented
-    | otherwise                                  = C4None
+    | otherwise                               = C4None
     where
         ints = intervals $ chord
 

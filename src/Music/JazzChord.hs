@@ -12,12 +12,24 @@ import Music.Prettify
 type JazzChord = (PitchClass, Chord2, Chord3, Chord4, Chord5, Chord6, Chord7)
 
 jazzify :: Chord -> JazzChord 
-jazzify c@(root, _) = (root, chord2 c, chord3 c, chord4 c, chord5 c, chord6 c, chord7 c)
-
-chordify :: JazzChord -> Chord
-chordify (root,c2,c3,c4,c5,c6,c7) = (root, filter ((/=) root) [f c2, f c3, f c4, f c5, f c6, f c7])
+jazzify c@(root, set) = (root,c2,c3,c4,c5,c6,c7)
     where
-        f c = root + (toPitchClass $ semitones c)
+        consumeTone chordN s = (c',s')
+            where
+                c' = chordN (root,s)
+                p  = root + (toPitchClass . semitones) c'
+                s' = filter (/= p) s
+        (c3,set')      = consumeTone chord3 set
+        (c5,set'')     = consumeTone chord5 set'
+        (c2,set''')    = consumeTone chord2 set''
+        (c4,set'''')   = consumeTone chord4 set'''
+        (c6,set''''')  = consumeTone chord6 set''''
+        (c7,set'''''') = consumeTone chord7 set'''''
+
+instance Chordify JazzChord where
+    chordify (root,c2,c3,c4,c5,c6,c7) = (root, filter ((/=) root) [f c2, f c3, f c4, f c5, f c6, f c7])
+        where
+            f c = root + (toPitchClass $ semitones c)
 
 instance Prettify JazzChord where
     prettify (root, _, C3Minor, _, C5Diminished, _, C7Diminished) = map f $ prettify root
