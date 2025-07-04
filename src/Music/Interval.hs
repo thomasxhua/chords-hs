@@ -7,6 +7,8 @@ module Music.Interval
     , Semitones(..)
     , fromSemitones
     , intervalsFromRoot
+    , transposeDown
+    , transposeUp
     ) where
 
 import Music.PitchClass
@@ -87,4 +89,10 @@ fromSemitones n = f n'
 
 intervalsFromRoot :: PitchClass -> PitchClass -> [Interval]
 intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if (root > pc) then 12 else 0)) - fromEnum root
+
+transposeDown :: PitchClass -> Interval -> PitchClass
+transposeDown pc = ((-) pc) . toPitchClass . semitones
+
+transposeUp :: PitchClass -> Interval -> PitchClass
+transposeUp pc = ((+) pc) . toPitchClass . semitones
 

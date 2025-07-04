@@ -1,11 +1,7 @@
 module Music.Triad
     ( Triad(..)
-    , chordify
     , TriadSpecies(..)
-    , triadFromRoot
-    , species
-    , speciesify
-    , isValid
+    , chordify
     , parallel
     , relative
     , leitton
@@ -15,56 +11,39 @@ import Music.PitchClass
 import Music.Chord
 import Music.Interval
 
-type Triad = (PitchClass, PitchClass, PitchClass)
-
-instance Chordify Triad where
-    chordify (a,b,c) = (a,[b,c])
-
-data TriadSpecies = TSMinor|TSMajor|TSNone
+data TriadSpecies = TSMinor|TSMajor
     deriving (Eq,Show)
 
-triadFromRoot :: PitchClass -> TriadSpecies -> Maybe Triad
-triadFromRoot root tr = case tr of
-    TSNone  -> Nothing
-    TSMinor -> Just (root, thirdify SMinor, fifth)
-    TSMajor -> Just (root, thirdify SMajor, fifth)
-    where
-        thirdify = (+) root . toPitchClass . semitones . SInterval Third
-        fifth = root + (toPitchClass . semitones $ PInterval Fifth PPerfect)
+type Triad = (PitchClass, TriadSpecies)
 
-invertOnce :: Triad -> Triad
-invertOnce (a,b,c) = (b,c,a)
+instance Chordify Triad where
+    chordify (root, tr) = case tr of
+        TSMinor -> (root, [thirdify SMinor, fifth])
+        TSMajor -> (root, [thirdify SMajor, fifth])
+        where
+            thirdify = (+) root . toPitchClass . semitones . SInterval Third
+            fifth = root + (toPitchClass . semitones $ PInterval Fifth PPerfect)
 
-class Species a where
-    species :: a -> TriadSpecies
-
-instance Species Triad where
-    species (a,b,c)
-      | not $ PInterval Fifth PPerfect `elem` intervalsFromRoot a c = TSNone
-      | SInterval Third SMinor `elem` intervalsFromRoot a b         = TSMinor
-      | SInterval Third SMajor `elem` intervalsFromRoot a b         = TSMajor
-      | otherwise                                                   = TSNone
-
-instance Species Chord where
-    species c
-      | all (`elem` ints) [SInterval Third SMajor, PInterval Fifth PPerfect] = TSMajor
-      | all (`elem` ints) [SInterval Third SMinor, PInterval Fifth PPerfect] = TSMinor
-      | otherwise                                                            = TSNone
-      where
-          ints = intervals c
-
-speciesify :: Chord -> Maybe Triad
-speciesify c@(root,_) = triadFromRoot root $ species c
-
-isValid :: Triad -> Bool
-isValid = ((/=) TSNone) . species
+triadify :: Chord -> Maybe Triad
+triadify c@(root,_)
+  | all (`elem` ints) [SInterval Third SMajor, PInterval Fifth PPerfect] = Just (root, TSMajor)
+  | all (`elem` ints) [SInterval Third SMinor, PInterval Fifth PPerfect] = Just (root, TSMinor)
+  | otherwise                                                            = Nothing
+  where
+      ints = intervals c
 
 parallel :: Triad -> Triad
-parallel = id
+parallel (root,spec) = case spec of
+    TSMinor -> (root, TSMajor)
+    TSMajor -> (root, TSMinor)
 
 relative :: Triad -> Triad
-relative = id
+relative (root,spec) = case spec of
+    TSMinor -> (transposeUp root $ SInterval Third SMinor, TSMajor)
+    TSMajor -> (transposeDown root $ SInterval Third SMinor, TSMinor)
 
 leitton :: Triad -> Triad
-leitton = id
+leitton (root,spec) = case spec of
+    TSMinor -> (transposeDown root $ SInterval Third SMajor, TSMajor)
+    TSMajor -> (transposeUp root $ SInterval Third SMajor, TSMinor)
 
