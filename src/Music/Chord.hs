@@ -53,14 +53,14 @@ instance Show Chord2 where
 chord2 :: Chord -> Chord2
 chord2 chord
     | SInterval Second SMajor `elem` ints     = if hasSeventh ints
-                                                      then C2Major7
-                                                      else C2Major
+                                                   then C2Major7
+                                                   else C2Major
     | SInterval Second SMinor `elem` ints     = if hasSeventh ints
-                                                      then C2Minor7
-                                                      else C2Minor
+                                                   then C2Minor7
+                                                   else C2Minor
     | SInterval Second SAugmented `elem` ints = if hasSeventh ints
-                                                      then C2Augmented7
-                                                      else C2Augmented
+                                                   then C2Augmented7
+                                                   else C2Augmented
     | otherwise                               = C2None
     where
         ints = intervals $ chord
@@ -112,11 +112,11 @@ instance Show Chord4 where
 chord4 :: Chord -> Chord4
 chord4 chord
     | PInterval Fourth PPerfect `elem` ints   = if hasSeventh ints
-                                                      then C4Perfect7
-                                                      else C4Perfect
+                                                   then C4Perfect7
+                                                   else C4Perfect
     | PInterval Fourth PAugmented `elem` ints = if hasSeventh ints
-                                                      then C4Augmented7
-                                                      else C4Augmented
+                                                   then C4Augmented7
+                                                   else C4Augmented
     | otherwise                               = C4None
     where
         ints = intervals $ chord
