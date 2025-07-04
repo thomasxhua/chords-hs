@@ -157,7 +157,7 @@ instance Semitones Chord6 where
 
 instance Show Chord6 where
     show C6Minor      = "b6"
-    show C6Major      = "#6"
+    show C6Major      = "6"
     show C6Minor7     = "b13"
     show C6Major7     = "13"
     show C6None       = ""
