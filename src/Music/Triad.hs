@@ -2,6 +2,8 @@ module Music.Triad
     ( Triad(..)
     , TriadSpecies(..)
     , chordify
+    , major
+    , minor
     , parallel
     , relative
     , leitton
@@ -32,10 +34,16 @@ triadify c@(root,_)
   where
       ints = intervals c
 
+major :: Triad -> Triad
+major (root,_) = (root,TSMajor)
+
+minor :: Triad -> Triad
+minor (root,_) = (root,TSMinor)
+
 parallel :: Triad -> Triad
-parallel (root,spec) = case spec of
-    TSMinor -> (root, TSMajor)
-    TSMajor -> (root, TSMinor)
+parallel c@(_,spec) = case spec of
+    TSMinor -> major c
+    TSMajor -> minor c
 
 relative :: Triad -> Triad
 relative (root,spec) = case spec of
