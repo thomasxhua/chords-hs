@@ -59,33 +59,33 @@ instance Semitones Interval where
 fromSemitones :: Int -> [Interval]
 fromSemitones n = f n'
     where
-        n' = n `mod` 12
-        f x
-          | x == 0  = [ PInterval Unison  PPerfect
-                      , SInterval Second  SDiminished
-                      , SInterval Seventh SAugmented ]
-          | x == 1  = [ PInterval Unison  PAugmented
-                      , SInterval Second  SMinor ]
-          | x == 2  = [ SInterval Second  SMajor
-                      , SInterval Third   SDiminished ]
-          | x == 3  = [ SInterval Second  SAugmented
-                      , SInterval Third   SMinor ]
-          | x == 4  = [ SInterval Third   SMajor
-                      , PInterval Fourth  PDiminished ]
-          | x == 5  = [ SInterval Third   SAugmented
-                      , PInterval Fourth  PPerfect ]
-          | x == 6  = [ PInterval Fourth  PAugmented
-                      , PInterval Fifth   PDiminished ]
-          | x == 7  = [ PInterval Fifth   PPerfect
-                      , SInterval Sixth   SDiminished ]
-          | x == 8  = [ PInterval Fifth   PAugmented
-                      , SInterval Sixth   SMinor ]
-          | x == 9  = [ SInterval Sixth   SMajor
-                      , SInterval Seventh SDiminished ]
-          | x == 10 = [ SInterval Sixth   SAugmented
-                      , SInterval Seventh SMinor ]
-          | x == 11 = [ SInterval Seventh SMajor
-                      , PInterval Unison  PDiminished ]
+        n'  = n `mod` 12
+        f x = case x of
+            0  -> [ PInterval Unison  PPerfect
+                  , SInterval Second  SDiminished
+                  , SInterval Seventh SAugmented ]
+            1  -> [ PInterval Unison  PAugmented
+                  , SInterval Second  SMinor ]
+            2  -> [ SInterval Second  SMajor
+                  , SInterval Third   SDiminished ]
+            3  -> [ SInterval Second  SAugmented
+                  , SInterval Third   SMinor ]
+            4  -> [ SInterval Third   SMajor
+                  , PInterval Fourth  PDiminished ]
+            5  -> [ SInterval Third   SAugmented
+                  , PInterval Fourth  PPerfect ]
+            6  -> [ PInterval Fourth  PAugmented
+                  , PInterval Fifth   PDiminished ]
+            7  -> [ PInterval Fifth   PPerfect
+                  , SInterval Sixth   SDiminished ]
+            8  -> [ PInterval Fifth   PAugmented
+                  , SInterval Sixth   SMinor ]
+            9  -> [ SInterval Sixth   SMajor
+                  , SInterval Seventh SDiminished ]
+            10 -> [ SInterval Sixth   SAugmented
+                  , SInterval Seventh SMinor ]
+            11 -> [ SInterval Seventh SMajor
+                  , PInterval Unison  PDiminished ]
 
 intervalsFromRoot :: PitchClass -> PitchClass -> [Interval]
 intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if (root > pc) then 12 else 0)) - fromEnum root

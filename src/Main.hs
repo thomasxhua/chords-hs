@@ -19,6 +19,10 @@ cs = [ (flat E, [D, flat B, G, F, A])
      , (G, [D,F])
      , (G, [B,D])
      , (G, [C,E])
+     , (C, [E,A])
+     , (C, [E,G,A])
+     , (C, [E,G,flat B])
+     , (C, [Cs,D,Ds,E,F,Fs,G,Gs,A,As,B])
      ]
 
 ts = [ (C, TSMajor)
@@ -34,5 +38,9 @@ dom = map ($ (G,TSMajor)) tvs
 
 main :: IO ()
 main = do
-    putStrLn $ show $ map prettify cs
+    print $ map prettify cs
+    print ""
+    print $ intersect ton sub
+    print $ intersect ton dom
+    print $ intersect sub dom
 
