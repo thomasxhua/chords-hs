@@ -7,14 +7,15 @@ module Music.Triad
     , minor
     , parallel
     , relative
-    , leitton
+    , leittonw
+    , NROperation(..)
     ) where
 
 import Music.PitchClass
 import Music.Chord
 import Music.Interval
 
-data TriadSpecies = TSMinor|TSMajor|TSNone
+data TriadSpecies = TSMinor|TSMajor
     deriving (Eq,Show)
 
 type Triad = (PitchClass, TriadSpecies)
@@ -25,15 +26,14 @@ instance Chordify Triad where
             thirdify = (+) root . toPitchClass . semitones . SInterval Third
             fifth    = (+) root . toPitchClass . semitones . PInterval Fifth $ PPerfect
             set      = case spec of
-                TSNone  -> []
                 TSMinor -> [thirdify SMinor, fifth]
                 TSMajor -> [thirdify SMajor, fifth]
 
-species :: Chord -> TriadSpecies
+species :: Chord -> Maybe TriadSpecies
 species c@(root,_)
-  | all (`elem` ints) [SInterval Third SMajor, PInterval Fifth PPerfect] = TSMajor
-  | all (`elem` ints) [SInterval Third SMinor, PInterval Fifth PPerfect] = TSMinor
-  | otherwise                                                            = TSNone
+  | all (`elem` ints) [SInterval Third SMajor, PInterval Fifth PPerfect] = Just TSMajor
+  | all (`elem` ints) [SInterval Third SMinor, PInterval Fifth PPerfect] = Just TSMinor
+  | otherwise                                                            = Nothing
   where
       ints = intervals c
 
@@ -45,19 +45,28 @@ minor (root,_) = (root,TSMinor)
 
 parallel :: Triad -> Triad
 parallel c@(root,spec) = case spec of
-    TSNone  -> (root,TSNone)
     TSMinor -> major c
     TSMajor -> minor c
 
 relative :: Triad -> Triad
 relative (root,spec) = case spec of
-    TSNone  -> (root,TSNone)
     TSMinor -> (transposeUp   root $ SInterval Third SMinor, TSMajor)
     TSMajor -> (transposeDown root $ SInterval Third SMinor, TSMinor)
 
-leitton :: Triad -> Triad
-leitton (root,spec) = case spec of
-    TSNone  -> (root,TSNone)
+leittonw :: Triad -> Triad
+leittonw (root,spec) = case spec of
     TSMinor -> (transposeDown root $ SInterval Third SMajor, TSMajor)
     TSMajor -> (transposeUp   root $ SInterval Third SMajor, TSMinor)
+
+data NROperation = NRParallel|NRRelative|NRLeittonw
+    deriving (Eq)
+
+instance Show NROperation where
+    show NRParallel = "P"
+    show NRRelative = "R"
+    show NRLeittonw = "L"
+
+calculatePath :: Triad -> Triad -> [NROperation]
+calculatePath a@(_,aSpec) b@(_,bSpec)
+  | a == b = []
 

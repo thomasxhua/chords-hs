@@ -10,9 +10,9 @@ _T,_t,_p,_g,_P,_G,_Tp,_Tg,_TP,_TG,_tG,_tP,_tg,_tp :: Triad -> Triad
 _T = major
 _t = minor
 _p = minor . relative
-_g = minor . leitton
+_g = minor . leittonw
 _P = major . relative
-_G = major . leitton
+_G = major . leittonw
 _Tp = _p . _T
 _Tg = _g . _T
 _TP = _P . _T
