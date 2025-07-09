@@ -30,15 +30,15 @@ instance Num PitchClass where
 
 instance Prettify PitchClass where
     prettify C  = ["C"]
-    prettify Cs = ["C#","Db"]
+    prettify Cs = ["Db","C#"]
     prettify D  = ["D"]
-    prettify Ds = ["D#","Eb"]
+    prettify Ds = ["Eb","D#"]
     prettify E  = ["E"]
     prettify F  = ["F"]
-    prettify Fs = ["F#","Gb"]
+    prettify Fs = ["Gb","F#"]
     prettify G  = ["G"]
-    prettify Gs = ["G#","Ab"]
+    prettify Gs = ["Ab","G#"]
     prettify A  = ["A"]
-    prettify As = ["A#","Bb"]
+    prettify As = ["Bb","A#"]
     prettify B  = ["B"]
 

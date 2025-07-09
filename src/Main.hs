@@ -43,4 +43,5 @@ main = do
     print $ intersect ton sub
     print $ intersect ton dom
     print $ intersect sub dom
+    print $ transformNRTree (head . prettify . chordify) $ applyNRTree (C,TSMajor) (generateNRTree 3)
 
