@@ -3,12 +3,17 @@
 #include "constants.h"
 
 midi::Device::Device()
-    : keys(std::move(std::vector<bool>(midi::MESSAGE_VAL_MAX, false)))
+    : keys({0ULL,0ULL})
 {}
 
-const std::vector<bool>& midi::Device::get_keys() const
+const midi::Device::Keys& midi::Device::get_keys() const
 {
     return keys;
+}
+
+midi::Device::Keys* midi::Device::get_keys_ptr()
+{
+    return &keys;
 }
 
 void midi::Device::callback(
@@ -30,6 +35,19 @@ void midi::Device::handle_message(
         && type != midi::MESSAGE_VOICE_TYPE_NOTE_ON)
         return;
     const uint8_t key = message[midi::MESSAGE_IDX_VAL0];
-    keys[key] = (type == midi::MESSAGE_VOICE_TYPE_NOTE_ON);
+    if (key < midi::MESSAGE_VAL_LOW_MAX)
+    {
+        if (type == midi::MESSAGE_VOICE_TYPE_NOTE_ON)
+            keys.low |= 1ULL << key;
+        else
+            keys.low &= ~(1ULL << key);
+    }
+    else
+    {
+        if (type == midi::MESSAGE_VOICE_TYPE_NOTE_ON)
+            keys.high |= 1ULL << (key - midi::MESSAGE_VAL_LOW_MAX);
+        else
+            keys.high &= ~(1ULL << (key - midi::MESSAGE_VAL_LOW_MAX));
+    }
 }
 

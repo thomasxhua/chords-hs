@@ -26,26 +26,40 @@ foreign import ccall "ffi_midi_interface_set_port"
 foreign import ccall "ffi_midi_interface_get_device"
     ffi_midi_interface_get_device :: Ptr MidiInterface -> IO (Ptr MidiDevice)
 
-foreign import ccall "ffi_midi_device_get_keys_low"
-    ffi_midi_device_get_keys_low :: Ptr MidiDevice -> IO Word64
+data MidiDeviceKeys = MidiDeviceKeys Word64 Word64
 
-foreign import ccall "ffi_midi_device_get_keys_high"
-    ffi_midi_device_get_keys_high :: Ptr MidiDevice -> IO Word64
+instance Storable MidiDeviceKeys where
+    sizeOf _    = sizeOf (undefined :: Word64) * 2
+    alignment _ = alignment (undefined :: Word64)
+    peek ptr = do
+        let ptr' = castPtr ptr :: Ptr Word64
+        low  <- peekElemOff ptr' 0
+        high <- peekElemOff ptr' 1
+        return $ MidiDeviceKeys low high
+    poke ptr (MidiDeviceKeys low high) = do
+        let ptr' = castPtr ptr :: Ptr Word64
+        pokeElemOff ptr' 0 low
+        pokeElemOff ptr' 1 high
 
-showKeysHalf :: Word64 -> String
-showKeysHalf w = [ if testBit w i then 'x' else ' ' | i <- [0..63] ]
+instance Show MidiDeviceKeys where
+    show (MidiDeviceKeys low high) = showKeysHalf low ++ showKeysHalf high
+        where
+            showKeysHalf w = [ if testBit w i then 'x' else ' ' | i <- [0..63] ]
+
+foreign import ccall "ffi_midi_device_get_keys"
+    ffi_midi_device_get_keys :: Ptr MidiDevice -> IO (Ptr MidiDeviceKeys)
 
 main :: IO ()
 main = do
-    midi   <- ffi_midi_interface_new
+    midi <- ffi_midi_interface_new
     ffi_midi_interface_set_port midi 0
     device <- ffi_midi_interface_get_device midi
     let loop = do
             inputting <- hReady stdin
             unless inputting $ do
-                low    <- ffi_midi_device_get_keys_low device
-                high   <- ffi_midi_device_get_keys_high device
-                print $ showKeysHalf low ++ showKeysHalf high
+                keys <- ffi_midi_device_get_keys device
+                keysStr <- peek keys
+                print keysStr
                 threadDelay 20000
                 loop
     loop

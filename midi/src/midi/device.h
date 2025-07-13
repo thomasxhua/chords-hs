@@ -8,8 +8,14 @@ namespace midi
 
 class Device
 {
+public:
+    struct Keys
+    {
+        uint64_t low,high;
+    };
+
 private:
-    std::vector<bool> keys;
+    Keys keys;
 
 public:
     static void callback(double delta_time, std::vector<uint8_t>* message, void* user_data);
@@ -17,7 +23,8 @@ public:
 
     Device();
 
-    const std::vector<bool>& get_keys() const;
+    const midi::Device::Keys& get_keys() const;
+    midi::Device::Keys* get_keys_ptr();
 };
 
 }

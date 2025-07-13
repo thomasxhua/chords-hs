@@ -43,27 +43,10 @@ midi::Device* ffi_midi_interface_get_device(const midi::Interface* midi)
     return midi->get_device();
 }
 
-uint64_t ffi_midi_device_get_keys_low(const midi::Device* device)
+midi::Device::Keys* ffi_midi_device_get_keys(midi::Device* device)
 {
     if (!device)
-        return 0ULL;
-    const auto keys = device->get_keys();
-    uint64_t temp = 0;
-    for (uint64_t i=0ULL; i<64ULL; ++i)
-        if (keys[i])
-            temp |= (1ULL << i);
-    return temp;
-}
-
-uint64_t ffi_midi_device_get_keys_high(const midi::Device* device)
-{
-    if (!device)
-        return 0ULL;
-    const auto keys = device->get_keys();
-    uint64_t temp = 0;
-    for (uint64_t i=0ULL; i<64ULL; ++i)
-        if (keys[i+64ULL])
-            temp |= (1ULL << i);
-    return temp;
+        return nullptr;
+    return device->get_keys_ptr();
 }
 
