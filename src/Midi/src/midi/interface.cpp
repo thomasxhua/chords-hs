@@ -14,8 +14,19 @@ void midi::Interface::set_port(const uint64_t port_number)
     rtmidi_in->openPort(rtmidi_port_number);
 }
 
-void midi::Interface::dialog_select_port()
-{}
+uint64_t midi::Interface::get_port_count() const
+{
+    if (!rtmidi_in)
+        return 0ULL;
+    return rtmidi_in->getPortCount();
+}
+
+std::string midi::Interface::get_port_name(const uint64_t i) const
+{
+    if (!rtmidi_in)
+        return "";
+    return rtmidi_in->getPortName(i);
+}
 
 void midi::Interface::rtmidi_init()
 {

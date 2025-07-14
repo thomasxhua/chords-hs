@@ -10,7 +10,7 @@ midi::InterfaceCL::InterfaceCL()
 void midi::InterfaceCL::dialog_select_port()
 {
     std::string port_name;
-    const uint64_t number_of_ports = rtmidi_in->getPortCount();
+    const uint64_t number_of_ports = get_port_count();
     if (!number_of_ports)
     {
         std::cout << "No MIDI devices found!" << std::endl;
@@ -21,7 +21,7 @@ void midi::InterfaceCL::dialog_select_port()
     {
         try
         {
-            port_name = rtmidi_in->getPortName(i);
+            port_name = get_port_name(i);
         }
         catch (const RtMidiError& error)
         {

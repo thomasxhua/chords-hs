@@ -33,7 +33,8 @@ public:
     Interface();
     void set_port(const uint64_t port_number);
 
-    void dialog_select_port();
+    uint64_t get_port_count() const;
+    std::string get_port_name(const uint64_t i) const;
 
     midi::Device* get_device() const;
 };

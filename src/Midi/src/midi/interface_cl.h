@@ -9,7 +9,7 @@ class InterfaceCL : public Interface
 {
 public:
     InterfaceCL();
-    void dialog_select_port() override;
+    void dialog_select_port();
 };
 
 }

@@ -1,15 +1,18 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
+module Midi.FFI
+    ( MidiInterface(..)
+    , MidiDevice(..)
+
 import Foreign
-import Foreign.Ptr
+import Foreign.Ptr (nullPtr)
+import Foreign.C.String (CString, peekCString)
 import Data.Word
 import Data.Bits (testBit)
 import Control.Concurrent (threadDelay)
-import Control.Monad (unless)
-import System.IO (hReady, stdin)
-
-foreign import ccall "ffi_fibonacci"
-    ffi_fibonacci :: Word64 -> IO Word64
+import Control.Monad (unless, forM_)
+import Control.Exception (bracket)
+import System.IO (hReady, hFlush, stdin, stdout)
 
 data MidiInterface
 data MidiDevice
@@ -22,6 +25,12 @@ foreign import ccall "ffi_midi_interface_free"
 
 foreign import ccall "ffi_midi_interface_set_port"
     ffi_midi_interface_set_port :: Ptr MidiInterface -> Word64 -> IO ()
+
+foreign import ccall "ffi_midi_interface_get_port_count"
+    ffi_midi_interface_get_port_count :: Ptr MidiInterface -> IO Word64
+
+foreign import ccall "ffi_midi_interface_get_port_name"
+    ffi_midi_interface_get_port_name :: Ptr MidiInterface -> Word64 -> IO CString
 
 foreign import ccall "ffi_midi_interface_get_device"
     ffi_midi_interface_get_device :: Ptr MidiInterface -> IO (Ptr MidiDevice)
@@ -49,10 +58,31 @@ instance Show MidiDeviceKeys where
 foreign import ccall "ffi_midi_device_get_keys"
     ffi_midi_device_get_keys :: Ptr MidiDevice -> IO (Ptr MidiDeviceKeys)
 
-main :: IO ()
-main = do
-    midi <- ffi_midi_interface_new
-    ffi_midi_interface_set_port midi 0
+printPort :: Ptr MidiInterface -> Word64 -> IO String
+printPort midi i = do
+    cStr <- ffi_midi_interface_get_port_name midi i
+    name <- peekCString cStr
+    return $ "(" ++ show i ++ ") " ++ name
+
+setPort :: Ptr MidiInterface -> IO ()
+setPort midi
+    | midi == nullPtr = return ()
+    | otherwise       = do
+        portCount <- ffi_midi_interface_get_port_count midi
+        if portCount == 0
+           then do
+                putStrLn "No MIDI ports found."
+            else do
+                forM_ [0 .. portCount-1] $ \i -> do
+                    line <- printPort midi i
+                    putStrLn line
+                putStr $ "Select from " ++ show portCount ++ " MIDI ports: "
+                hFlush stdout
+                input <- getLine
+                ffi_midi_interface_set_port midi (read input :: Word64)
+
+keysWatcher :: Ptr MidiInterface -> IO ()
+keysWatcher midi = do
     device <- ffi_midi_interface_get_device midi
     let loop = do
             inputting <- hReady stdin
@@ -63,5 +93,7 @@ main = do
                 threadDelay 20000
                 loop
     loop
-    ffi_midi_interface_free midi
+
+midiInterface :: (Ptr MidiInterface -> IO a) -> IO a
+midiInterface = bracket ffi_midi_interface_new ffi_midi_interface_free
 

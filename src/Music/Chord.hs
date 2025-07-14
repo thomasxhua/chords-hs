@@ -14,8 +14,11 @@ module Music.Chord
     , chord6
     , chord7
     , intervals
+    , pitchClassesToChord
     , semitones
     ) where
+
+import Data.List (sort)
 
 import Music.PitchClass
 import Music.Interval
@@ -28,6 +31,10 @@ class Chordify a where
 
 intervals :: Chord -> [Interval]
 intervals (root, set) = foldr (++) [] $ map (intervalsFromRoot root) set
+
+pitchClassesToChord :: [PitchClass] -> Maybe Chord
+pitchClassesToChord []  = Nothing
+pitchClassesToChord pcs = Just (head pcs, tail pcs)
 
 data Chord2 = C2Major|C2Minor|C2Augmented|C2Major7|C2Minor7|C2Augmented7|C2None
     deriving (Eq)

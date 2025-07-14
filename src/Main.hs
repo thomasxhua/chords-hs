@@ -9,6 +9,9 @@ import Music.JazzChord
 import Music.Triad
 import Music.Terz
 
+import Midi.FFI
+import Midi.Interface
+
 cs = [ (flat E, [D, flat B, G, F, A])
      , (flat E, [D, flat B, F, flat A])
      , (flat E, [flat $ flat D, flat $ flat B, flat G])
@@ -44,4 +47,6 @@ main = do
     print $ intersect ton dom
     print $ intersect sub dom
     print $ transformNRTree (head . prettify . chordify) $ applyNRTree (C,TSMajor) (generateNRTree 3)
-
+    midiInterface $ \midi -> do
+        setPort midi
+        keysWatcher midi
