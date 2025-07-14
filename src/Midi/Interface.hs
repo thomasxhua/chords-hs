@@ -61,7 +61,7 @@ keysWatcher midi = do
             unless inputting $ do
                 keysPtr <- ffi_midi_device_get_keys device
                 keys    <- peek keysPtr
-                --print keysStr
+                putStr . show $ keys
                 putStrLn (maybe "/" (head . prettify) $ midiDeviceKeysToChord keys)
                 threadDelay 20000
                 loop
