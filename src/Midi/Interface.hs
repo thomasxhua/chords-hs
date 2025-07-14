@@ -1,7 +1,7 @@
 module Midi.Interface
     ( printPort
     , setPort
-    , midiInterface
+    , withMidiInterface
     , keysWatcher
     ) where
 
@@ -42,8 +42,8 @@ setPort midi
                 input <- getLine
                 ffi_midi_interface_set_port midi (read input :: Word64)
 
-midiInterface :: (Ptr MidiInterface -> IO a) -> IO a
-midiInterface = bracket ffi_midi_interface_new ffi_midi_interface_free
+withMidiInterface :: (Ptr MidiInterface -> IO a) -> IO a
+withMidiInterface = bracket ffi_midi_interface_new ffi_midi_interface_free
 
 midiDeviceKeysToPitchClasses :: MidiDeviceKeys -> [PitchClass]
 midiDeviceKeysToPitchClasses (MidiDeviceKeys low high) =
