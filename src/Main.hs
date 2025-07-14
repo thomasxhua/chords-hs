@@ -5,6 +5,8 @@ import Midi.Interface
 main :: IO ()
 main = do
     withMidiInterface $ \midi -> do
-        setPort midi
-        keysWatcher midi
+        setPortSucess <- setPort midi
+        if setPortSucess
+            then keysWatcher midi
+            else return ()
 
