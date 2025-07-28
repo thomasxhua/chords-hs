@@ -30,7 +30,7 @@ class Chordify a where
     chordify :: a -> Chord
 
 intervals :: Chord -> [Interval]
-intervals (root, set) = foldr (++) [] $ map (intervalsFromRoot root) set
+intervals (root, set) = concatMap (intervalsFromRoot root) set
 
 pitchClassesToChord :: [PitchClass] -> Maybe Chord
 pitchClassesToChord []  = Nothing
@@ -70,7 +70,7 @@ chord2 chord
                                                    else C2Augmented
     | otherwise                               = C2None
     where
-        ints = intervals $ chord
+        ints = intervals chord
 
 data Chord3 = C3Sus2|C3Minor|C3Major|C3Sus4|C3No3|C3None
     deriving (Eq)
@@ -126,7 +126,7 @@ chord4 chord
                                                    else C4Augmented
     | otherwise                               = C4None
     where
-        ints = intervals $ chord
+        ints = intervals chord
 
 data Chord5 = C5Diminished|C5Perfect|C5Augmented|C5None
     deriving (Eq)
@@ -179,7 +179,7 @@ chord6 chord
                                               else C6Major
     | otherwise                          = C6None
     where
-        ints = intervals $ chord
+        ints = intervals chord
 
 data Chord7 = C7Diminished|C7Dominant|C7Major|C7None
     deriving (Eq)

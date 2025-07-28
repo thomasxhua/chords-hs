@@ -88,11 +88,11 @@ fromSemitones n = f n'
                   , PInterval Unison  PDiminished ]
 
 intervalsFromRoot :: PitchClass -> PitchClass -> [Interval]
-intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if (root > pc) then 12 else 0)) - fromEnum root
+intervalsFromRoot root pc = fromSemitones $ (fromEnum pc + (if root > pc then 12 else 0)) - fromEnum root
 
 transposeDown :: PitchClass -> Interval -> PitchClass
-transposeDown pc = ((-) pc) . toPitchClass . semitones
+transposeDown pc = (pc -) . toPitchClass . semitones
 
 transposeUp :: PitchClass -> Interval -> PitchClass
-transposeUp pc = ((+) pc) . toPitchClass . semitones
+transposeUp pc = (pc +) . toPitchClass . semitones
 

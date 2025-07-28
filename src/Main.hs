@@ -1,12 +1,12 @@
 module Main where
 
+import Control.Monad (when)
+
 import Midi.Interface
 
 main :: IO ()
 main = do
     withMidiInterface $ \midi -> do
         setPortSucess <- setPort midi
-        if setPortSucess
-            then keysWatcher midi
-            else return ()
+        when setPortSucess $ keysWatcher midi
 

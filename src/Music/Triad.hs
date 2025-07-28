@@ -116,11 +116,11 @@ generateNRTree h = case h of
 
 transformNRTree :: (a -> b) -> NRTree a -> NRTree b
 transformNRTree _ NREmpty       = NREmpty
-transformNRTree f (NRNode x xs) = NRNode (f x) (map (\t -> transformNRTree f t) xs)
+transformNRTree f (NRNode x xs) = NRNode (f x) (map transformNRTree f xs)
 
 traverseDFSNRTree :: (a -> b -> b) -> b -> NRTree a -> NRTree b
 traverseDFSNRTree _ _ NREmpty       = NREmpty
-traverseDFSNRTree f y (NRNode x xs) = NRNode y' (map (\t -> traverseDFSNRTree f y' t) xs)
+traverseDFSNRTree f y (NRNode x xs) = NRNode y' (map traverseDFSNRTree f y' xs)
     where
         y' = f x y
 
@@ -132,5 +132,5 @@ applyNROperation op tr = case op of
     NRRelative -> relative tr
 
 applyNRTree :: Triad -> NRTree NROperation -> NRTree Triad
-applyNRTree tr t = traverseDFSNRTree applyNROperation tr t
+applyNRTree = traverseDFSNRTree applyNROperation
 
